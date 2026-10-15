@@ -59,39 +59,135 @@
 
 ---
 
-## 📐 Arquitectura del Sistema
+## 🏛️ Architecture / Arquitectura
 
-```text
-┌────────────────────────────────────────────────────────┐
-│               Frontend (React 19 + Vite)               │
-│                                                        │
-│  [AppShell: Glass Header | Cyber Sidebar | ThemeSwitch]│
-│       │                                                │
-│  [Zustand authStore] ── Axios Interceptor (Bearer JWT) │
-└───────────────────────────┬────────────────────────────┘
-                            │ REST API (JSON / Multipart)
-┌───────────────────────────▼────────────────────────────┐
-│                  Backend (FastAPI)                     │
-│                                                        │
-│  Routers:                                              │
-│   ├── /auth      (Login, Register, Me)                 │
-│   ├── /posts     (Paginación, Filtros, CRUD, Vistas)   │
-│   ├── /files     (Upload multipart, Preview, Download) │
-│   └── /comments  (Árbol anidado, Reacciones, Auditoría)│
-│                                                        │
-│  Core & Servicios:                                     │
-│   ├── Security   (JWT + Bcrypt passlib)                │
-│   ├── PostService & FileService (SHA-256, Chunks 8KB)  │
-│   └── Database   (Engine SQLAlchemy + SessionLocal)    │
-└───────────────────────────┬────────────────────────────┘
-                            │ ORM
-┌───────────────────────────▼────────────────────────────┐
-│             Base de Datos (SQLite / PostgreSQL)        │
-│  [usuarios] ──< [posts] ──< [archivos]                │
-│      │              └───< [comentarios] (self-ref)     │
-│      └───< [auditoria_logs]                            │
-│  [categorias] ──< [posts]                              │
-└────────────────────────────────────────────────────────┘
+El proyecto sigue una arquitectura desacoplada cliente-servidor orientada a servicios y flujo sistémico (**Entrada ➔ Procesamiento ➔ Salida ➔ Feedback**), conectada mediante una API REST protegida por tokens Bearer JWT:
+
+```mermaid
+flowchart LR
+    %% Clases y Estilos
+    classDef userNode fill:#1f2937,stroke:#3b82f6,stroke-width:2px,color:#f3f4f6;
+    classDef clientNode fill:#111827,stroke:#38bdf8,stroke-width:1px,color:#e5e7eb;
+    classDef serverNode fill:#0f172a,stroke:#10b981,stroke-width:1px,color:#e5e7eb;
+    classDef dataNode fill:#18181b,stroke:#f59e0b,stroke-width:1px,color:#e5e7eb;
+
+    User(["👤 Usuario / Estudiante"]):::userNode
+
+    subgraph FE ["Capas de Presentación (Frontend — React 19 + Vite)"]
+        UI["AppShell & Vistas<br/>(Dashboard, Editor, Feed)"]:::clientNode
+        State["Estado & Store<br/>(Zustand authStore)"]:::clientNode
+        Themes["Tokens de Diseño<br/>(tokens.css / 3 Temas)"]:::clientNode
+        ClientHTTP["Cliente Axios<br/>(JWT Interceptor)"]:::clientNode
+
+        Themes -.-> UI
+        UI <--> State
+        State --> ClientHTTP
+    end
+
+    subgraph BE ["Servicios y Lógica de Negocio (Backend — FastAPI)"]
+        Gatekeeper["Seguridad & Auth<br/>(OAuth2 / JWT / Bcrypt)"]:::serverNode
+        
+        subgraph Routers ["Routers & Endpoints"]
+            R_Auth["/auth"]:::serverNode
+            R_Posts["/posts"]:::serverNode
+            R_Files["/files"]:::serverNode
+            R_Comm["/comments"]:::serverNode
+        end
+
+        subgraph Services ["Servicios Core"]
+            S_Post["PostService"]:::serverNode
+            S_File["FileService<br/>(SHA-256 / Chunks)"]:::serverNode
+            S_Audit["Auditoría & Logs"]:::serverNode
+        end
+
+        Gatekeeper --> Routers
+        R_Posts --> S_Post
+        R_Files --> S_File
+        R_Comm --> S_Audit
+    end
+
+    subgraph Storage ["Almacenamiento y Persistencia"]
+        FileSystem[("Sistema de Archivos<br/>/uploads")]:::dataNode
+        DB[("Base de Datos Relacional<br/>SQLite / PostgreSQL")]:::dataNode
+    end
+
+    %% Conexiones principales
+    User -->|"Interacciones UI / Events"| UI
+    ClientHTTP -->|"HTTP REST / JSON & Multipart"| Gatekeeper
+    S_File -->|"Stream I/O & Thumbnails"| FileSystem
+    S_Post & S_File & S_Audit -->|"SQLAlchemy ORM"| DB
+```
+
+### 🗄️ Modelo Relacional del Ecosistema
+
+```mermaid
+erDiagram
+    USUARIO ||--o{ POST : "publica"
+    USUARIO ||--o{ COMENTARIO : "escribe"
+    USUARIO ||--o{ AUDITORIA_LOG : "genera"
+    CATEGORIA ||--o{ POST : "clasifica"
+    POST ||--o{ ARCHIVO : "adjunta"
+    POST ||--o{ COMENTARIO : "recibe"
+    COMENTARIO ||--o{ COMENTARIO : "responde a (padre_id)"
+
+    USUARIO {
+        int id PK
+        string codigo_estudiante UK
+        string nombre_completo
+        string email UK
+        string password_hash
+        string rol "admin | estudiante"
+        datetime created_at
+    }
+
+    CATEGORIA {
+        int id PK
+        string nombre
+        int semana_numero
+        string descripcion
+    }
+
+    POST {
+        int id PK
+        string titulo
+        text resumen
+        text contenido_markdown
+        int autor_id FK
+        int categoria_id FK
+        int vistas
+        datetime created_at
+    }
+
+    ARCHIVO {
+        int id PK
+        int post_id FK
+        string nombre_original
+        string ruta
+        string hash_sha256
+        int tamano_bytes
+        string mime_type
+        int descargas
+    }
+
+    COMENTARIO {
+        int id PK
+        int post_id FK
+        int usuario_id FK
+        int padre_id FK "self-reference"
+        text contenido
+        boolean is_deleted
+        datetime created_at
+    }
+
+    AUDITORIA_LOG {
+        int id PK
+        int usuario_id FK
+        string accion
+        string entidad
+        int entidad_id
+        string ip
+        datetime timestamp
+    }
 ```
 
 ---
