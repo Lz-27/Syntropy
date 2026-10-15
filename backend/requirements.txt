@@ -1,0 +1,11 @@
+fastapi==0.115.*
+uvicorn[standard]==0.32.*
+sqlalchemy==2.0.*
+pydantic[email]==2.9.*
+pydantic-settings==2.6.*
+python-jose[cryptography]==3.3.*
+passlib[bcrypt]==1.7.*
+python-multipart==0.0.*
+aiofiles==24.1.*
+Pillow==11.0.*
+alembic==1.14.*
