@@ -367,7 +367,7 @@ El proyecto sigue el plan estructurado en 12 fases detallado en [tgs_hub_executi
 * [x] **P1 — Fundación del Sistema:** Tokens de diseño, fuentes y estructura de directorios.
 * [x] **P2 — Backend Core:** Modelos ORM, esquemas Pydantic, Auth JWT y Seeder TGS.
 * [x] **P3 — Backend API (Posts y Archivos):** Endpoints REST para publicaciones y gestión de archivos.
-* [ ] **P4 — Backend API (Comentarios y Auditoría):** Hilos recursivos, reacciones académicas y logs de auditoría.
+* [x] **P4 — Backend API (Comentarios y Auditoría):** Hilos recursivos (máx 2 niveles), reacciones académicas y logs de auditoría.
 * [x] **P5 — Frontend Shell:** AppShell, glassmorphism Header, Sidebar con flujo TGS y ThemeSwitcher.
 * [x] **P6 — Frontend Auth:** Páginas de Login, Registro y guardias de ruta (`ProtectedRoute`). *(Perfil en desarrollo)*.
 * [ ] **P7 — Frontend Dashboard y Feed:** KPIs sistémicos y feed con filtrado por semanas TGS.
@@ -734,7 +734,7 @@ The project roadmap comprises 12 distinct phases detailed in [tgs_hub_execution_
 * [x] **P1 — System Foundation:** Design tokens, typography setup, and directory architecture.
 * [x] **P2 — Backend Core:** ORM models, Pydantic schemas, JWT authentication, and TGS Seeder.
 * [x] **P3 — Backend API (Posts & Files):** REST endpoints for post management and secure file uploading.
-* [ ] **P4 — Backend API (Comments & Audit):** Recursive threads, academic reactions, and audit logging.
+* [x] **P4 — Backend API (Comments & Audit):** Recursive threads (max 2 levels), academic reactions, and audit logging.
 * [x] **P5 — Frontend Shell:** AppShell layout, glassmorphic Header, systemic flow Sidebar, and ThemeSwitcher.
 * [x] **P6 — Frontend Auth:** Login & Register pages and route protection guards (`ProtectedRoute`). *(Profile under development)*.
 * [ ] **P7 — Frontend Dashboard & Feed:** System KPIs and post feed with syllabus filtering.
