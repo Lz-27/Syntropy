@@ -1,0 +1,106 @@
+/* ============================================================
+   TGS-Hub — Typography System
+   Fuentes: Plus Jakarta Sans (UI) · JetBrains Mono (datos)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Scale tipográfico ───────────────────────────────────────── */
+:root {
+  --font-ui:   'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Scale: 11 / 12 / 14 / 16 / 18 / 22 / 28 / 36 / 48 */
+  --text-2xs: 0.6875rem;   /* 11px */
+  --text-xs:  0.75rem;     /* 12px */
+  --text-sm:  0.875rem;    /* 14px */
+  --text-base:1rem;        /* 16px */
+  --text-lg:  1.125rem;    /* 18px */
+  --text-xl:  1.375rem;    /* 22px */
+  --text-2xl: 1.75rem;     /* 28px */
+  --text-3xl: 2.25rem;     /* 36px */
+  --text-4xl: 3rem;        /* 48px */
+
+  /* Weights */
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+
+  /* Line heights */
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.625;
+
+  /* Prosa max-width (72ch per spec) */
+  --prose-width: 72ch;
+}
+
+/* ── Reset base ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  background-color: var(--bg);
+  color: var(--text);
+  transition: var(--t-theme);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Clases utilitarias de tipo ──────────────────────────────── */
+.font-ui   { font-family: var(--font-ui); }
+.font-mono { font-family: var(--font-mono); }
+
+.text-2xs  { font-size: var(--text-2xs); }
+.text-xs   { font-size: var(--text-xs); }
+.text-sm   { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg   { font-size: var(--text-lg); }
+.text-xl   { font-size: var(--text-xl); }
+.text-2xl  { font-size: var(--text-2xl); }
+.text-3xl  { font-size: var(--text-3xl); }
+.text-4xl  { font-size: var(--text-4xl); }
+
+.weight-light    { font-weight: var(--weight-light); }
+.weight-regular  { font-weight: var(--weight-regular); }
+.weight-medium   { font-weight: var(--weight-medium); }
+.weight-semibold { font-weight: var(--weight-semibold); }
+
+.text-muted   { color: var(--text-muted); }
+.text-signal  { color: var(--signal); }
+.text-pulse   { color: var(--pulse); }
+.text-amber   { color: var(--amber); }
+.text-prose   { color: var(--prose); }
+
+/* Prosa de lectura larga */
+.prose-content {
+  max-width: var(--prose-width);
+  line-height: var(--leading-relaxed);
+  font-size: var(--text-base);
+}
+
+/* Código inline */
+code:not([class]) {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.4em;
+  color: var(--signal);
+}

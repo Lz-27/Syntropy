@@ -1,0 +1,35 @@
+/* AppShell CSS Module */
+.shell {
+  display: grid;
+  grid-template-columns: var(--current-sidebar, var(--sidebar-width)) 1fr;
+  min-height: 100vh;
+  background-color: var(--bg);
+  transition: grid-template-columns var(--t-sidebar);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  padding: 24px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+
+/* Mobile: sidebar como drawer */
+@media (max-width: 767px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}
