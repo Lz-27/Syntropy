@@ -1,7 +1,8 @@
 # TGS-Hub (Syntropy)
 
 > **Plataforma Académica Colaborativa y Sistema de Gestión del Conocimiento para Teoría General de Sistemas (TGS)**  
-> Construida bajo el paradigma sistémico: **Entradas → Procesamiento → Salidas → Retroalimentación (Feedback)**.
+> **Collaborative Academic Platform & Knowledge Management System for General Systems Theory (GST)**  
+> Paradigma sistémico / Systemic Paradigm: **Entradas/Inputs ➔ Procesamiento/Processing ➔ Salidas/Outputs ➔ Retroalimentación/Feedback**
 
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -10,6 +11,14 @@
 [![SQLite](https://img.shields.io/badge/SQLite-3-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 
 ---
+
+### 🌐 Idioma / Language
+* [🇪🇸 Español](#-versión-en-español)
+* [🇺🇸 English](#-english-version)
+
+---
+
+# 🇪🇸 Versión en Español
 
 ## 📌 Tabla de Contenidos
 1. [Visión y Principios del Proyecto](#-visión-y-principios-del-proyecto)
@@ -59,7 +68,7 @@
 
 ---
 
-## 🏛️ Architecture / Arquitectura
+## 🏛️ Arquitectura del Sistema
 
 El proyecto sigue una arquitectura desacoplada cliente-servidor orientada a servicios y flujo sistémico (**Entrada ➔ Procesamiento ➔ Salida ➔ Feedback**), conectada mediante una API REST protegida por tokens Bearer JWT:
 
@@ -372,3 +381,370 @@ El proyecto sigue el plan estructurado en 12 fases detallado en [tgs_hub_executi
 ## 📄 Licencia
 
 Este proyecto se distribuye para fines académicos e investigativos en el marco del estudio de la **Teoría General de Sistemas**.
+
+---
+---
+
+# 🇺🇸 English Version
+
+## 📌 Table of Contents
+1. [Project Vision & Core Principles](#-project-vision--core-principles)
+2. [Technology Stack](#-technology-stack)
+3. [System Architecture](#-system-architecture)
+4. [Project Structure](#-project-structure)
+5. [Quickstart Guide](#-quickstart-guide)
+6. [Default Credentials (Seeder)](#-default-credentials-seeder)
+7. [Environment Variables](#-environment-variables)
+8. [Design System & Theming](#-design-system--theming)
+9. [Security & File Management](#-security--file-management)
+10. [Execution Plan & Roadmap Status](#-execution-plan--roadmap-status)
+
+---
+
+## 🔬 Project Vision & Core Principles
+
+**TGS-Hub (Syntropy)** is an academic platform designed for Engineering and Management students. It models academic interaction and debate through the core pillars of General Systems Theory (GST):
+
+* **Inputs:** Exploration and intake of academic papers, student posts, and data sets.
+* **Processing:** Analysis, synthesis, and contextualization of systemic concepts using a rich Markdown editor.
+* **Outputs:** Publishing research articles, assignments, and multi-format attachment repositories (.pdf, .py, .docx, .csv, etc.).
+* **Feedback:** Nested discussion threads, interaction audit logs, and typed academic reactions (`valuable_contribution`, `inquiry`, `insightful_analysis`).
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend
+* **Core:** [React 19](https://react.dev/) + [Vite](https://vitejs.dev/)
+* **Routing:** [React Router v7](https://reactrouter.com/)
+* **State Management:** [Zustand](https://zustand-demo.pmnd.rs/)
+* **HTTP Client:** [Axios](https://axios-http.com/) with automatic JWT interceptors
+* **Editor & Content:** `@uiw/react-md-editor`, `react-syntax-highlighter`
+* **File Handling & Preview:** `react-dropzone`, `react-pdf`
+* **Metrics & Visuals:** `recharts`, `lucide-react`
+* **Styling:** Native CSS powered by Design Tokens (`tokens.css`, `typography.css`)
+
+### Backend
+* **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Python 3.11+)
+* **ASGI Server:** [Uvicorn](https://www.uvicorn.org/)
+* **ORM:** [SQLAlchemy 2.0](https://www.sqlalchemy.org/)
+* **Database:** SQLite (readily configurable to PostgreSQL via `DATABASE_URL`)
+* **Data Validation:** [Pydantic v2](https://docs.pydantic.dev/) + `pydantic-settings`
+* **Security:** JWT authentication (`python-jose`), password hashing with `passlib[bcrypt]` (cost factor 12)
+* **Multimedia & File Storage:** `aiofiles`, `Pillow` (thumbnail generation), SHA-256 hash checksum validation
+
+---
+
+## 🏛️ System Architecture
+
+The project follows a decoupled client-server architecture centered around services and systemic flow (**Inputs ➔ Processing ➔ Outputs ➔ Feedback**), connected via a REST API secured by Bearer JWT tokens:
+
+```mermaid
+flowchart LR
+    %% Classes & Styles
+    classDef userNode fill:#1f2937,stroke:#3b82f6,stroke-width:2px,color:#f3f4f6;
+    classDef clientNode fill:#111827,stroke:#38bdf8,stroke-width:1px,color:#e5e7eb;
+    classDef serverNode fill:#0f172a,stroke:#10b981,stroke-width:1px,color:#e5e7eb;
+    classDef dataNode fill:#18181b,stroke:#f59e0b,stroke-width:1px,color:#e5e7eb;
+
+    User(["👤 User / Student"]):::userNode
+
+    subgraph FE ["Presentation Layers (Frontend — React 19 + Vite)"]
+        UI["AppShell & Views<br/>(Dashboard, Editor, Feed)"]:::clientNode
+        State["State & Store<br/>(Zustand authStore)"]:::clientNode
+        Themes["Design Tokens<br/>(tokens.css / 3 Themes)"]:::clientNode
+        ClientHTTP["Axios Client<br/>(JWT Interceptor)"]:::clientNode
+
+        Themes -.-> UI
+        UI <--> State
+        State --> ClientHTTP
+    end
+
+    subgraph BE ["Business Logic & Services (Backend — FastAPI)"]
+        Gatekeeper["Security & Auth<br/>(OAuth2 / JWT / Bcrypt)"]:::serverNode
+        
+        subgraph Routers ["Routers & Endpoints"]
+            R_Auth["/auth"]:::serverNode
+            R_Posts["/posts"]:::serverNode
+            R_Files["/files"]:::serverNode
+            R_Comm["/comments"]:::serverNode
+        end
+
+        subgraph Services ["Core Services"]
+            S_Post["PostService"]:::serverNode
+            S_File["FileService<br/>(SHA-256 / Chunks)"]:::serverNode
+            S_Audit["Audit & Logs"]:::serverNode
+        end
+
+        Gatekeeper --> Routers
+        R_Posts --> S_Post
+        R_Files --> S_File
+        R_Comm --> S_Audit
+    end
+
+    subgraph Storage ["Storage & Persistence"]
+        FileSystem[("File System<br/>/uploads")]:::dataNode
+        DB[("Relational Database<br/>SQLite / PostgreSQL")]:::dataNode
+    end
+
+    %% Connections
+    User -->|"UI Interactions / Events"| UI
+    ClientHTTP -->|"HTTP REST / JSON & Multipart"| Gatekeeper
+    S_File -->|"Stream I/O & Thumbnails"| FileSystem
+    S_Post & S_File & S_Audit -->|"SQLAlchemy ORM"| DB
+```
+
+### 🗄️ Relational Entity Model
+
+```mermaid
+erDiagram
+    USER ||--o{ POST : "publishes"
+    USER ||--o{ COMMENT : "writes"
+    USER ||--o{ AUDIT_LOG : "triggers"
+    CATEGORY ||--o{ POST : "classifies"
+    POST ||--o{ ATTACHMENT : "contains"
+    POST ||--o{ COMMENT : "receives"
+    COMMENT ||--o{ COMMENT : "replies to (parent_id)"
+
+    USER {
+        int id PK
+        string student_code UK
+        string full_name
+        string email UK
+        string password_hash
+        string role "admin | student"
+        datetime created_at
+    }
+
+    CATEGORY {
+        int id PK
+        string name
+        int week_number
+        string description
+    }
+
+    POST {
+        int id PK
+        string title
+        text summary
+        text markdown_content
+        int author_id FK
+        int category_id FK
+        int views
+        datetime created_at
+    }
+
+    ATTACHMENT {
+        int id PK
+        int post_id FK
+        string original_name
+        string file_path
+        string sha256_hash
+        int size_bytes
+        string mime_type
+        int downloads
+    }
+
+    COMMENT {
+        int id PK
+        int post_id FK
+        int user_id FK
+        int parent_id FK "self-reference"
+        text content
+        boolean is_deleted
+        datetime created_at
+    }
+
+    AUDIT_LOG {
+        int id PK
+        int user_id FK
+        string action
+        string entity
+        int entity_id
+        string ip_address
+        datetime timestamp
+    }
+```
+
+---
+
+## 📂 Project Structure
+
+```text
+Syntropy/
+├── backend/
+│   ├── app/
+│   │   ├── core/               # Configuration, DB engine & JWT security helpers
+│   │   ├── models/             # ORM models (User, Post, Categoria, Archivo, Comentario, Audit)
+│   │   ├── schemas/            # Pydantic validation & serialization schemas
+│   │   ├── repositories/       # Data access abstractions
+│   │   ├── services/           # Business logic (FileService with SHA-256, PostService)
+│   │   ├── routers/            # Route controllers (auth, posts, files, comments)
+│   │   └── main.py             # FastAPI entrypoint, CORS configuration & static mount
+│   ├── uploads/                # Physical file storage directory
+│   ├── seed_tgs_data.py        # Realistic database seeder for academic simulation
+│   ├── requirements.txt        # Python package dependencies
+│   └── .env.example            # Environment variables template
+├── frontend/
+│   ├── src/
+│   │   ├── components/         # Modular UI components (layout, ui, posts, files, comments)
+│   │   ├── design/             # Multi-theme CSS tokens & typography scale
+│   │   ├── hooks/              # Custom React hooks (useAuth, useTheme, usePosts, useFiles)
+│   │   ├── pages/              # Main view pages (Dashboard, Login, Register, Profile, etc.)
+│   │   ├── services/           # Axios client configured with Bearer Token interceptor
+│   │   ├── store/              # Global state with Zustand (authStore)
+│   │   ├── App.jsx             # Main router configuration & Protected Route Guards
+│   │   └── main.jsx            # Application entrypoint
+│   └── package.json            # Node scripts & frontend dependencies
+├── tgs_hub_execution_plan.md   # Architectural specification & 12-phase master plan
+└── README.md                   # Comprehensive technical documentation
+```
+
+---
+
+## 🚀 Quickstart Guide
+
+### Prerequisites
+* **Python**: 3.11 or higher
+* **Node.js**: 20 or higher
+* **Node package manager**: `pnpm` or `npm`
+
+---
+
+### 1. Backend Setup
+
+1. Navigate to the backend directory and set up a virtual environment:
+   ```bash
+   cd backend
+   python -m venv .venv
+   ```
+
+2. Activate the virtual environment:
+   * **Windows (PowerShell):**
+     ```powershell
+     .\.venv\Scripts\Activate.ps1
+     ```
+   * **Linux / macOS:**
+     ```bash
+     source .venv/bin/activate
+     ```
+
+3. Install requirements:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Create your local environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+5. Run the database seeder to populate courses, GST weeks, seed accounts, and academic posts:
+   ```bash
+   python seed_tgs_data.py
+   ```
+
+6. Launch the development server:
+   ```bash
+   uvicorn app.main:app --reload --port 8000
+   ```
+   * *Swagger Interactive Docs:* [http://localhost:8000/docs](http://localhost:8000/docs)
+   * *Healthcheck Endpoint:* [http://localhost:8000/health](http://localhost:8000/health)
+
+---
+
+### 2. Frontend Setup
+
+1. Open a new terminal session, navigate to the `frontend` folder, and install dependencies:
+   ```bash
+   cd frontend
+   pnpm install
+   # or: npm install
+   ```
+
+2. Start the Vite development server:
+   ```bash
+   pnpm dev
+   # or: npm run dev
+   ```
+
+3. Open your browser at [http://localhost:5173](http://localhost:5173).
+
+---
+
+## 🔑 Default Credentials (Seeder)
+
+The `seed_tgs_data.py` script provisions pre-configured academic profiles:
+
+| Role | Student ID / Username | Password | Full Name |
+|---|---|---|---|
+| **Administrator** | `61035728` | `271714` | Docente Administrador TGS |
+| **Student** | `20241001` | `password123` | Carlos Mendoza |
+| **Student** | `20241002` | `password123` | Valeria Quispe |
+
+> Also sets up 10 syllabus categories (Weeks 1 to 10: Bertalanffy, Cybernetics, Entropy, Homeostasis, etc.), 20 enriched Markdown posts, and sample attachments.
+
+---
+
+## ⚙️ Environment Variables
+
+### Backend (`backend/.env`)
+
+| Variable | Type | Description | Default Value |
+|---|---|---|---|
+| `SECRET_KEY` | `str` | Secret key for signing JWT tokens (generate via openssl for prod) | *Development placeholder* |
+| `DATABASE_URL` | `str` | SQLAlchemy connection string (SQLite or PostgreSQL) | `sqlite:///./tgs_hub.db` |
+| `UPLOAD_DIR` | `str` | Storage folder for uploaded files | `uploads` |
+| `MAX_FILE_MB` | `int` | Maximum allowed file size in MB | `100` |
+| `ALLOWED_EXTENSIONS`| `str` | Comma-separated list of permitted extensions | `pdf,docx,pptx,xlsx,txt,csv,png,jpg,py,zip...` |
+| `CORS_ORIGINS` | `str` | Allowed origin URLs for Cross-Origin requests | `http://localhost:5173,http://localhost:3000` |
+| `ACCESS_TOKEN_EXPIRE_DAYS` | `int` | Token expiration time in days | `7` |
+
+---
+
+## 🎨 Design System & Theming
+
+Designed intentionally under **`frontend-design`** and **`impeccable`** guidelines, sporting a bespoke *Academic Tech / Cyber-Systemic* visual language rather than generic SaaS templates.
+
+### Supported Themes
+1. **Dark Matte (Default):** Deep carbon root (`#0D1117`), card surfaces `#161B22`, and structured boundaries `#21262D`.
+2. **Academic Paper (Light):** Crisp `#FAFBFC` canvas with pure white cards tailored for sustained reading.
+3. **Deep Cyber Navy:** Night-time deep navy palette (`#060D1F` / `#0B1629`) with cyan and emerald accents.
+
+### Typography
+* **UI & Body Copy:** *Plus Jakarta Sans* (weights 300, 400, 500, 600)
+* **Metadata, Hashes & Code:** *JetBrains Mono* (weights 400, 500)
+
+---
+
+## 🔒 Security & File Management
+
+* **Cryptographic Hashing:** Every file uploaded is streamed in 8 KB chunks to compute its **SHA-256** checksum for duplicate detection and tamper verification.
+* **Format Control:** Dual validation pipeline (extension check + MIME type inspection).
+* **Role-Based Access Control (RBAC):** FastAPI dependencies enforce separation between regular students and faculty administrators (`require_role("admin")`).
+* **In-browser Preview:** Dedicated inline streaming endpoints (`Content-Disposition: inline`) enabling previewing without compulsory downloads.
+
+---
+
+## 🗺️ Execution Plan & Roadmap Status
+
+The project roadmap comprises 12 distinct phases detailed in [tgs_hub_execution_plan.md](file:///c:/PROYECTOS/FULL%20STACK/Syntropy/tgs_hub_execution_plan.md):
+
+* [x] **P1 — System Foundation:** Design tokens, typography setup, and directory architecture.
+* [x] **P2 — Backend Core:** ORM models, Pydantic schemas, JWT authentication, and TGS Seeder.
+* [x] **P3 — Backend API (Posts & Files):** REST endpoints for post management and secure file uploading.
+* [ ] **P4 — Backend API (Comments & Audit):** Recursive threads, academic reactions, and audit logging.
+* [x] **P5 — Frontend Shell:** AppShell layout, glassmorphic Header, systemic flow Sidebar, and ThemeSwitcher.
+* [x] **P6 — Frontend Auth:** Login & Register pages and route protection guards (`ProtectedRoute`). *(Profile under development)*.
+* [ ] **P7 — Frontend Dashboard & Feed:** System KPIs and post feed with syllabus filtering.
+* [ ] **P8 — Frontend Editor & File Manager:** Live Markdown editor and interactive Drag & Drop dropzone.
+* [ ] **P9 — Frontend Academic Debate:** Threaded nested comments and typed reaction triggers.
+* [ ] **P10 — Analytics & File Explorer:** Recharts visual charts, interactive GST flow diagram, and file browser.
+* [ ] **P11 — Universal File Previewer:** Multi-format modal for PDF, source code, images, and SHA-256 verification.
+* [ ] **P12 — QA, Accessibility & Wrap-up:** Contrast audit, end-to-end responsiveness, and final optimizations.
+
+---
+
+## 📄 License
+
+This software is distributed for academic, educational, and research purposes under the study of **General Systems Theory**.
