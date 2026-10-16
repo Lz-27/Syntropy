@@ -38,6 +38,7 @@ function App() {
             <Route path="/dashboard"    element={<Dashboard />} />
             <Route path="/posts/new"    element={<NewPost />} />
             <Route path="/posts/:id"    element={<PostDetail />} />
+            <Route path="/posts/:id/edit" element={<NewPost />} />
             <Route path="/files"        element={<FileExplorer />} />
             <Route path="/analytics"    element={<Analytics />} />
             <Route path="/profile"      element={<Profile />} />
