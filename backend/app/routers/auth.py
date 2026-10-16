@@ -51,14 +51,37 @@ def register(body: UserCreate, request: Request, db: Session = Depends(get_db)):
     return user
 
 
+import time
+from collections import defaultdict
+
+_failed_attempts = defaultdict(list)
+
+
+def _check_rate_limit(key: str, max_attempts: int = 5, window_seconds: int = 60):
+    now = time.time()
+    attempts = [t for t in _failed_attempts[key] if now - t < window_seconds]
+    _failed_attempts[key] = attempts
+    if len(attempts) >= max_attempts:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Demasiados intentos fallidos. Por favor espera {int(window_seconds - (now - attempts[0]))} segundos.",
+        )
+
+
+def _record_failed_attempt(key: str):
+    _failed_attempts[key].append(time.time())
+
+
 @router.post("/login", response_model=TokenResponse)
 def login(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
-    """Autenticación con email/código + contraseña. Retorna JWT."""
-    ip = request.client.host if request.client else None
+    """Autenticación con email/código + contraseña. Retorna JWT (con rate limiting de seguridad)."""
+    ip = request.client.host if request.client else "unknown"
+    rate_key = f"{ip}:{form_data.username}"
+    _check_rate_limit(rate_key)
 
     # Buscar por email O código de estudiante
     user = db.query(User).filter(
@@ -69,6 +92,7 @@ def login(
     ).first()
 
     if not user or not verify_password(form_data.password, user.password_hash):
+        _record_failed_attempt(rate_key)
         _log(db, "login_failed", ip=ip, detalle=f"intento fallido: {form_data.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
