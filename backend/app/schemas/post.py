@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel
 from app.schemas.user import UserOut
+from app.schemas.file import ArchivoOut
 
 
 class CategoriaOut(BaseModel):
@@ -42,6 +43,7 @@ class PostOut(BaseModel):
     updated_at: datetime
     autor: Optional[UserOut] = None
     categoria: Optional[CategoriaOut] = None
+    archivos: List[ArchivoOut] = []
 
 
 class PostListItem(BaseModel):
