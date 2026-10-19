@@ -366,16 +366,16 @@ El proyecto sigue el plan estructurado en 12 fases detallado en [tgs_hub_executi
 
 * [x] **P1 — Fundación del Sistema:** Tokens de diseño, fuentes y estructura de directorios.
 * [x] **P2 — Backend Core:** Modelos ORM, esquemas Pydantic, Auth JWT y Seeder TGS.
-* [x] **P3 — Backend API (Posts y Archivos):** Endpoints REST para publicaciones y gestión de archivos.
+* [x] **P3 — Backend API (Posts y Archivos):** Endpoints REST para publicaciones y gestión de archivos con hash SHA-256.
 * [x] **P4 — Backend API (Comentarios y Auditoría):** Hilos recursivos (máx 2 niveles), reacciones académicas y logs de auditoría.
-* [x] **P5 — Frontend Shell:** AppShell, glassmorphism Header, Sidebar con flujo TGS y ThemeSwitcher.
-* [x] **P6 — Frontend Auth:** Páginas de Login, Registro y guardias de ruta (`ProtectedRoute`). *(Perfil en desarrollo)*.
-* [ ] **P7 — Frontend Dashboard y Feed:** KPIs sistémicos y feed con filtrado por semanas TGS.
-* [ ] **P8 — Frontend Editor y Gestor de Archivos:** Editor Markdown en vivo y Dropzone con drag & drop.
-* [ ] **P9 — Frontend Debate y Comentarios:** Hilos interactivos de discusión y reacciones académicas.
-* [ ] **P10 — Analíticas y Explorador:** Gráficos con Recharts, diagrama interactivo de flujo y navegador de archivos.
-* [ ] **P11 — Previsualizador Universal:** Modal de lectura para PDF, código fuente, imágenes y hash SHA-256.
-* [ ] **P12 — QA, Accesibilidad y Cierre:** Auditoría de contraste, soporte móvil responsivo total y optimización.
+* [x] **P5 — Frontend Shell:** AppShell, glassmorphism Header, Sidebar con flujo TGS y ThemeSwitcher (3 temas).
+* [x] **P6 — Frontend Auth:** Páginas de Login, Registro, perfil de usuario y guardias de ruta (`ProtectedRoute`).
+* [x] **P7 — Frontend Dashboard y Feed:** KPIs sistémicos y feed con filtrado por semanas TGS y vista lista/tarjeta.
+* [x] **P8 — Frontend Editor y Gestor de Archivos:** Editor Markdown en vivo (`@uiw/react-md-editor`) y Dropzone con drag & drop.
+* [x] **P9 — Frontend Debate y Comentarios:** Hilos interactivos de discusión (hasta 2 niveles), reacciones académicas y edición inline.
+* [x] **P10 — Analíticas y Explorador:** Gráficos con Recharts, diagrama interactivo de flujo TGS y explorador global de archivos.
+* [x] **P11 — Previsualizador Universal:** Modal de lectura para PDF, código fuente coloreado, imágenes con zoom, texto y hash SHA-256.
+* [x] **P12 — QA, Accesibilidad y Cierre:** Auditoría de contraste, soporte móvil responsivo total, lazy loading de rutas y rate limiting.
 
 ---
 
@@ -733,16 +733,16 @@ The project roadmap comprises 12 distinct phases detailed in [tgs_hub_execution_
 
 * [x] **P1 — System Foundation:** Design tokens, typography setup, and directory architecture.
 * [x] **P2 — Backend Core:** ORM models, Pydantic schemas, JWT authentication, and TGS Seeder.
-* [x] **P3 — Backend API (Posts & Files):** REST endpoints for post management and secure file uploading.
+* [x] **P3 — Backend API (Posts & Files):** REST endpoints for post management and secure file uploading with SHA-256.
 * [x] **P4 — Backend API (Comments & Audit):** Recursive threads (max 2 levels), academic reactions, and audit logging.
-* [x] **P5 — Frontend Shell:** AppShell layout, glassmorphic Header, systemic flow Sidebar, and ThemeSwitcher.
-* [x] **P6 — Frontend Auth:** Login & Register pages and route protection guards (`ProtectedRoute`). *(Profile under development)*.
-* [ ] **P7 — Frontend Dashboard & Feed:** System KPIs and post feed with syllabus filtering.
-* [ ] **P8 — Frontend Editor & File Manager:** Live Markdown editor and interactive Drag & Drop dropzone.
-* [ ] **P9 — Frontend Academic Debate:** Threaded nested comments and typed reaction triggers.
-* [ ] **P10 — Analytics & File Explorer:** Recharts visual charts, interactive GST flow diagram, and file browser.
-* [ ] **P11 — Universal File Previewer:** Multi-format modal for PDF, source code, images, and SHA-256 verification.
-* [ ] **P12 — QA, Accessibility & Wrap-up:** Contrast audit, end-to-end responsiveness, and final optimizations.
+* [x] **P5 — Frontend Shell:** AppShell layout, glassmorphic Header, systemic flow Sidebar, and ThemeSwitcher (3 themes).
+* [x] **P6 — Frontend Auth:** Login & Register pages, user profile, and route protection guards (`ProtectedRoute`).
+* [x] **P7 — Frontend Dashboard & Feed:** System KPIs and post feed with syllabus filtering and list/card toggle.
+* [x] **P8 — Frontend Editor & File Manager:** Live Markdown editor (`@uiw/react-md-editor`) and interactive Drag & Drop dropzone.
+* [x] **P9 — Frontend Academic Debate:** Threaded nested comments (up to 2 levels), academic typed reactions, and inline editing.
+* [x] **P10 — Analytics & File Explorer:** Recharts visual charts, interactive GST flow diagram, and global file explorer.
+* [x] **P11 — Universal File Previewer:** Multi-format modal for PDF, syntax-highlighted code, zoomable images, text, and SHA-256.
+* [x] **P12 — QA, Accessibility & Wrap-up:** Contrast audit, end-to-end responsiveness, route lazy loading, and rate limiting.
 
 ---
 
