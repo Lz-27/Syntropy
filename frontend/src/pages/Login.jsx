@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import styles from './Login.module.css'
@@ -7,20 +7,34 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login } = useAuthStore()
+  const { login, isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || '/dashboard'
+
+  // Evitar bucle si from apunta a /login o no está definido
+  const rawFrom = location.state?.from?.pathname
+  const from = rawFrom && rawFrom !== '/login' ? rawFrom : '/dashboard'
+
+  // Si ya está autenticado, redirigir automáticamente
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
     try {
-      await login({ username: form.email, password: form.password })
+      await login({ username: form.email.trim(), password: form.password })
       navigate(from, { replace: true })
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Credenciales inválidas'
+      const msg =
+        err.response?.data?.detail ||
+        (err.code === 'ERR_NETWORK' || !err.response
+          ? 'No se pudo conectar con el servidor backend (puerto 8000).'
+          : 'Credenciales inválidas')
       setError(msg)
     } finally {
       setLoading(false)
