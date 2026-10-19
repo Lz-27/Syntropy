@@ -70,3 +70,134 @@ def global_stats(db=None):
         }
     finally:
         session.close()
+
+
+@app.get("/analytics", tags=["analytics"])
+def global_analytics():
+    """Analíticas profundas del ecosistema TGS para gráficos Recharts y diagrama de Flujo Sistémico."""
+    from sqlalchemy import func
+    from app.core.database import SessionLocal
+    from app.models.post import Post, Categoria
+    from app.models.file import Archivo
+    from app.models.comment import Comentario, Reaccion
+    from app.models.user import User as UserModel
+
+    session = SessionLocal()
+    try:
+        # 1. Actividad por semana / categoría
+        categorias = session.query(Categoria).order_by(Categoria.semana_numero.asc()).all()
+        activity_by_week = []
+        for cat in categorias:
+            num_posts = session.query(Post).filter(Post.categoria_id == cat.id).count()
+            # Comentarios en posts de esta categoría
+            post_ids = [p.id for p in session.query(Post.id).filter(Post.categoria_id == cat.id).all()]
+            num_comentarios = (
+                session.query(Comentario).filter(Comentario.post_id.in_(post_ids), Comentario.is_deleted == False).count()
+                if post_ids
+                else 0
+            )
+            activity_by_week.append({
+                "semana": f"Sem {cat.semana_numero}" if cat.semana_numero else cat.nombre[:10],
+                "semana_num": cat.semana_numero or 0,
+                "nombre": cat.nombre,
+                "posts": num_posts,
+                "comentarios": num_comentarios,
+                "total": num_posts + num_comentarios,
+            })
+
+        # 2. Distribución de tipos de archivo
+        ext_query = (
+            session.query(
+                Archivo.extension,
+                func.count(Archivo.id).label("count"),
+                func.sum(Archivo.tamano_bytes).label("total_bytes")
+            )
+            .group_by(Archivo.extension)
+            .all()
+        )
+        file_types = [
+            {
+                "extension": ext.lower(),
+                "name": ext.upper(),
+                "count": count,
+                "total_bytes": total_bytes or 0,
+            }
+            for ext, count, total_bytes in ext_query
+        ]
+
+        # 3. Top Contribuidores
+        users = session.query(UserModel).filter(UserModel.is_active == True).all()
+        contributors = []
+        for u in users:
+            posts_count = session.query(Post).filter(Post.autor_id == u.id).count()
+            comments_count = session.query(Comentario).filter(Comentario.usuario_id == u.id, Comentario.is_deleted == False).count()
+            # Archivos en posts de este autor
+            author_post_ids = [p.id for p in session.query(Post.id).filter(Post.autor_id == u.id).all()]
+            files_count = session.query(Archivo).filter(Archivo.post_id.in_(author_post_ids)).count() if author_post_ids else 0
+            # Reacciones recibidas
+            reactions_received = (
+                session.query(Reaccion)
+                .join(Comentario, Reaccion.comentario_id == Comentario.id)
+                .filter(Comentario.usuario_id == u.id)
+                .count()
+            )
+
+            score = (posts_count * 10) + (comments_count * 3) + (files_count * 5) + (reactions_received * 2)
+            if score > 0:
+                contributors.append({
+                    "id": u.id,
+                    "nombre_completo": u.nombre_completo,
+                    "codigo_estudiante": u.codigo_estudiante,
+                    "rol": u.rol,
+                    "avatar_url": u.avatar_url,
+                    "posts_count": posts_count,
+                    "comments_count": comments_count,
+                    "files_count": files_count,
+                    "reactions_count": reactions_received,
+                    "score": score,
+                })
+
+        contributors.sort(key=lambda x: x["score"], reverse=True)
+
+        # 4. Flujo Sistémico TGS
+        total_files = session.query(Archivo).count()
+        total_posts = session.query(Post).count()
+        total_views = session.query(func.sum(Post.vistas)).scalar() or 0
+        total_comments = session.query(Comentario).filter(Comentario.is_deleted == False).count()
+        total_reactions = session.query(Reaccion).count()
+
+        tgs_flow = {
+            "inputs": {
+                "label": "Entradas (Inputs)",
+                "sublabel": "Evidencias & Documentos",
+                "value": total_files,
+                "unit": "archivos",
+            },
+            "processes": {
+                "label": "Procesamiento",
+                "sublabel": "Artículos & Modelos TGS",
+                "value": total_posts,
+                "unit": "artículos",
+            },
+            "outputs": {
+                "label": "Salidas (Outputs)",
+                "sublabel": "Vistas & Transferencia",
+                "value": total_views,
+                "unit": "consultas",
+            },
+            "feedback": {
+                "label": "Retroalimentación (Feedback)",
+                "sublabel": "Debates & Reacciones",
+                "value": total_comments + total_reactions,
+                "unit": "interacciones",
+            },
+        }
+
+        return {
+            "activity_by_week": activity_by_week,
+            "file_types": file_types,
+            "top_contributors": contributors[:10],
+            "tgs_flow": tgs_flow,
+        }
+    finally:
+        session.close()
