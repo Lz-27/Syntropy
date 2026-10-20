@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Optional
 from sqlalchemy import String, Integer, BigInteger, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -9,7 +10,8 @@ class Archivo(Base):
     __tablename__ = "archivos"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    post_id: Mapped[int] = mapped_column(ForeignKey("posts.id"), index=True)
+    post_id: Mapped[int | None] = mapped_column(ForeignKey("posts.id"), nullable=True, index=True)
+    usuario_id: Mapped[int | None] = mapped_column(ForeignKey("usuarios.id"), nullable=True, index=True)
     nombre_original: Mapped[str] = mapped_column(String(500))
     ruta: Mapped[str] = mapped_column(String(1000))
     extension: Mapped[str] = mapped_column(String(20))
@@ -23,4 +25,5 @@ class Archivo(Base):
     )
 
     # Relationships
-    post: Mapped["Post"] = relationship(back_populates="archivos")
+    post: Mapped[Optional["Post"]] = relationship(back_populates="archivos")
+    usuario: Mapped[Optional["User"]] = relationship(lazy="select")
