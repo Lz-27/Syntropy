@@ -3,18 +3,18 @@
    3 temas: dark (default) · light · navy
    ============================================================ */
 
-/* ── TEMA OSCURO: Dark Matte / Carbón (DEFAULT) ─────────────── */
+/* ── TEMA OSCURO: Dark Obsidian / Pro (DEFAULT) ─────────────── */
 :root,
 [data-theme="dark"] {
-  --ink:        #0D1117;
-  --surface:    #161B22;
-  --surface-2:  #1C2128;
-  --boundary:   #21262D;
-  --muted:      #8B949E;
-  --signal:     #58A6FF;
-  --pulse:      #3FB950;
-  --amber:      #D29922;
-  --prose:      #E6EDF3;
+  --ink:        #07080B;
+  --surface:    #0C0E14;
+  --surface-2:  #12151E;
+  --boundary:   #1A1F2C;
+  --muted:      #828D9F;
+  --signal:     #38BDF8;
+  --pulse:      #10B981;
+  --amber:      #F59E0B;
+  --prose:      #EDF2F7;
 
   /* Semánticos */
   --bg:         var(--ink);
@@ -24,14 +24,14 @@
   --accent:     var(--signal);
 
   /* Signal con opacidad */
-  --signal-10: rgba(88, 166, 255, 0.10);
-  --signal-20: rgba(88, 166, 255, 0.20);
-  --pulse-10:  rgba(63, 185, 80, 0.10);
-  --amber-10:  rgba(210, 153, 34, 0.10);
+  --signal-10: rgba(56, 189, 248, 0.08);
+  --signal-20: rgba(56, 189, 248, 0.16);
+  --pulse-10:  rgba(16, 185, 129, 0.08);
+  --amber-10:  rgba(245, 158, 11, 0.08);
 
   /* Glassmorphism */
-  --glass-bg:     rgba(22, 27, 34, 0.75);
-  --glass-border: rgba(33, 38, 45, 0.80);
+  --glass-bg:     rgba(12, 14, 20, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.06);
 
   /* Sidebar */
   --sidebar-width:     240px;
@@ -82,15 +82,15 @@
 
 /* ── TEMA AZUL MARINO: Deep Cyber Navy ──────────────────────── */
 [data-theme="navy"] {
-  --ink:        #060D1F;
-  --surface:    #0B1629;
-  --surface-2:  #102038;
-  --boundary:   #1C2D4A;
-  --muted:      #7D94B5;
+  --ink:        #040711;
+  --surface:    #080E1E;
+  --surface-2:  #0F182E;
+  --boundary:   #172540;
+  --muted:      #788FA9;
   --signal:     #38BDF8;
   --pulse:      #34D399;
   --amber:      #FBBF24;
-  --prose:      #E2EAF4;
+  --prose:      #E4EEF8;
 
   --bg:         var(--ink);
   --text:       var(--prose);
@@ -98,11 +98,11 @@
   --border:     var(--boundary);
   --accent:     var(--signal);
 
-  --signal-10: rgba(56, 189, 248, 0.10);
-  --signal-20: rgba(56, 189, 248, 0.20);
-  --pulse-10:  rgba(52, 211, 153, 0.10);
-  --amber-10:  rgba(251, 191, 36, 0.10);
+  --signal-10: rgba(56, 189, 248, 0.08);
+  --signal-20: rgba(56, 189, 248, 0.16);
+  --pulse-10:  rgba(52, 211, 153, 0.08);
+  --amber-10:  rgba(251, 191, 36, 0.08);
 
-  --glass-bg:     rgba(11, 22, 41, 0.80);
-  --glass-border: rgba(28, 45, 74, 0.80);
+  --glass-bg:     rgba(8, 14, 30, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.07);
 }
