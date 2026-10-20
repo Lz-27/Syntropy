@@ -43,6 +43,7 @@ export const useAuthStore = create(
       onRehydrateStorage: () => (state) => {
         if (state?.token) {
           api.defaults.headers.common['Authorization'] = `Bearer ${state.token}`
+          state.isAuthenticated = true
         }
       },
     }
