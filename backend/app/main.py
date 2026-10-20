@@ -79,7 +79,7 @@ def global_analytics():
     from app.core.database import SessionLocal
     from app.models.post import Post, Categoria
     from app.models.file import Archivo
-    from app.models.comment import Comentario, Reaccion
+    from app.models.comment import Comentario, ReaccionComentario as Reaccion
     from app.models.user import User as UserModel
 
     session = SessionLocal()
