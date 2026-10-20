@@ -73,27 +73,52 @@ def _record_failed_attempt(key: str):
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(
+async def login(
     request: Request,
-    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
-    """Autenticación con email/código + contraseña. Retorna JWT (con rate limiting de seguridad)."""
+    """Autenticación con email/código + contraseña. Retorna JWT (soporta tanto JSON como Form-Data)."""
     ip = request.client.host if request.client else "unknown"
-    rate_key = f"{ip}:{form_data.username}"
+
+    username = None
+    password = None
+    content_type = request.headers.get("content-type", "")
+
+    if "application/json" in content_type:
+        try:
+            body = await request.json()
+            username = body.get("username") or body.get("email")
+            password = body.get("password")
+        except Exception:
+            pass
+    else:
+        try:
+            form = await request.form()
+            username = form.get("username") or form.get("email")
+            password = form.get("password")
+        except Exception:
+            pass
+
+    if not username or not password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Se requiere correo o código de estudiante y contraseña",
+        )
+
+    rate_key = f"{ip}:{username}"
     _check_rate_limit(rate_key)
 
     # Buscar por email O código de estudiante
     user = db.query(User).filter(
         or_(
-            User.email == form_data.username,
-            User.codigo_estudiante == form_data.username,
+            User.email == username,
+            User.codigo_estudiante == username,
         )
     ).first()
 
-    if not user or not verify_password(form_data.password, user.password_hash):
+    if not user or not verify_password(password, user.password_hash):
         _record_failed_attempt(rate_key)
-        _log(db, "login_failed", ip=ip, detalle=f"intento fallido: {form_data.username}")
+        _log(db, "login_failed", ip=ip, detalle=f"intento fallido: {username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Credenciales inválidas",
