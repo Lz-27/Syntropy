@@ -3,15 +3,14 @@ import { persist } from 'zustand/middleware'
 
 const THEME_KEY = 'tgs-hub-theme'
 
-const getSystemTheme = () => {
-  if (typeof window === 'undefined') return 'dark'
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+const getInitialTheme = () => {
+  return 'dark'
 }
 
 export const useThemeStore = create(
   persist(
     (set) => ({
-      theme: getSystemTheme(),
+      theme: getInitialTheme(),
       setTheme: (theme) => {
         document.documentElement.setAttribute('data-theme', theme)
         set({ theme })
