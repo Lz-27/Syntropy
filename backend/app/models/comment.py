@@ -67,3 +67,5 @@ class Comentario(Base):
         lazy="select",
     )
 
+# Alias para compatibilidad
+Reaccion = ReaccionComentario
