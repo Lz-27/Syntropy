@@ -8,6 +8,7 @@ import AppShell from './components/layout/AppShell'
 import ProtectedRoute from './components/layout/ProtectedRoute'
 
 // Páginas con Code Splitting / Lazy Loading (P12)
+const Home = lazy(() => import('./pages/Home'))
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -50,14 +51,16 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={<PageFallback />}>
         <Routes>
-          {/* Rutas públicas (sin shell) */}
+          {/* Página Principal pública — punto de entrada de la aplicación */}
+          <Route path="/" element={<Home />} />
+
+          {/* Rutas públicas de autenticación */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Rutas protegidas (con AppShell) */}
+          {/* Rutas protegidas (acceso al sistema con AppShell tras login) */}
           <Route element={<ProtectedRoute />}>
             <Route element={<AppShell />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/posts/new" element={<NewPost />} />
               <Route path="/posts/:id" element={<PostDetail />} />
@@ -69,8 +72,8 @@ function App() {
             </Route>
           </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          {/* Fallback a la página principal */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
